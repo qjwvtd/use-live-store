@@ -34,7 +34,7 @@ function createLiveStore(reducerMap) {
     }
     //combineReducers
     function combineReducers() {
-        function hookReducer(state, action) {
+        return function (state, action) {
             const nextState = {};
             for (let c in clonedReducers) {
                 const prevState = state[c];
@@ -47,8 +47,7 @@ function createLiveStore(reducerMap) {
             }
             asyncStore[0] = nextState;
             return nextState;
-        }
-        return hookReducer;
+        };
     }
     //merge stores
     const stores = combineStores();
