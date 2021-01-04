@@ -1,6 +1,6 @@
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin'); // 引入压缩插件
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin'); // 引入压缩插件
 const __rules = require('./webpack.loader');
 
 module.exports = {
@@ -14,21 +14,21 @@ module.exports = {
         filename: "[name].js",
         library: "share-store",
         libraryExport: "default", // 不添加的话引用的时候需要 tools.default
-        libraryTarget: "umd", // var this window ...
+        libraryTarget: "umd" // var this window ...
     },
     externals: {
         'react': {
             commonjs: 'react',
             commonjs2: 'react',
             amd: 'react',
-            root: 'React',
+            root: 'React'
         },
         'react-dom': {
             commonjs: 'react-dom',
             commonjs2: 'react-dom',
             amd: 'react-dom',
-            root: 'ReactDOM',
-        },
+            root: 'ReactDOM'
+        }
     },
     module: {
         rules: __rules

@@ -204,7 +204,6 @@ function createLiveStore(reducerMap) {
   var reducer = combineReducers(); //create context
 
   var Context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(stores); //Provider
-  // eslint-disable-next-line no-unused-consts
 
   function Provider(_ref) {
     var children = _ref.children;

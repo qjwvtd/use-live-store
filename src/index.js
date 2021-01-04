@@ -62,7 +62,6 @@ function createLiveStore(reducerMap) {
     //create context
     const Context = React.createContext(stores);
     //Provider
-    // eslint-disable-next-line no-unused-consts
     function Provider({ children }) {
         const [state, dispatch] = useReducer(reducer, stores);
         asyncStore = [state, dispatch];
