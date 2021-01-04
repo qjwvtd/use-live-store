@@ -4,14 +4,9 @@ function createLiveStore(reducerMap) {
     if (arguments.length === 0) {
         throw 'Reducer is required';
     }
-    if ([Object, Function].indexOf(arguments[0].constructor) === -1) {
+    if (arguments[0].constructor !== Object) {
         throw 'Parameter exception,The reducer collection must be an object type, ' +
-        'If there is only one reducer, use the reducer as the parameter directly' +
-        'For example:: {reducer1,reducer2,...} or reducer';
-    }
-    if (arguments[0].constructor === Function) {
-        const onlyReducer = arguments[0];
-        arguments[0] = { onlyReducer };
+        'For example:: {reducer1,reducer2,...} or {reducer}';
     }
     //绑定到第一个参数上
     reducerMap = arguments[0];
