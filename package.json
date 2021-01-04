@@ -1,0 +1,56 @@
+{
+    "name": "use-live-store",
+    "version": "0.1.7",
+    "description": "一个只用react hook api实现的全局和局部状态管理机",
+    "main": "index.js",
+    "module": "index.js",
+    "scripts": {
+        "build": "webpack",
+        "send": "npm publish --access=public",
+        "lint": "eslint --fix --ext .js,.jsx src",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "react",
+        "state",
+        "hook"
+    ],
+    "files": [
+        "dist"
+    ],
+    "author": "qjwvtd",
+    "license": "MIT",
+    "repository": "https://github.com/qjwvtd/use-live-store.git",
+    "devDependencies": {
+        "@babel/cli": "^7.12.10",
+        "@babel/core": "^7.12.10",
+        "@babel/plugin-transform-react-jsx": "^7.10.4",
+        "@babel/plugin-transform-react-jsx-self": "^7.10.4",
+        "@babel/preset-env": "^7.12.10",
+        "@babel/preset-react": "^7.10.4",
+        "babel-loader": "^8.2.2",
+        "clean-webpack-plugin": "^0.1.19",
+        "react": "^16.9.0",
+        "react-dom": "^16.9.0",
+        "terser-webpack-plugin": "^3.1.0",
+        "webpack": "^4.44.2",
+        "webpack-cli": "^3.3.12"
+    },
+    "peerDependencies": {
+        "react": "^16.8.0",
+        "react-dom": "^16.8.0"
+    },
+    "babel": {
+        "presets": [
+            "@babel/preset-react",
+            "@babel/preset-env"
+        ],
+        "plugins": [
+            "@babel/plugin-transform-react-jsx"
+        ]
+    },
+    "npmcmd": {
+        "login": "npm login",
+        "push": "npm publish --access=public"
+    }
+}
