@@ -39,7 +39,7 @@ export default function (state = initState, action) {
 }
 ```
 
-### /reducergirl.js
+### /reducer/girl.js
 ```js
 const initState = {
     list: []
