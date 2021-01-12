@@ -1,5 +1,5 @@
 'use strict';
-import React, { useReducer, useContext } from 'react';
+import React from 'react';
 function createLiveStore(reducerMap) {
     if (arguments.length === 0) {
         throw 'Reducer is required';
@@ -12,8 +12,6 @@ function createLiveStore(reducerMap) {
     reducerMap = arguments[0];
     //克隆reducer
     const clonedReducers = {};
-    //async store
-    let asyncStore = [];
     for (let a in reducerMap) {
         if (reducerMap[a].constructor !== Function) {
             throw 'The type of reducer must be a function';
@@ -45,7 +43,6 @@ function createLiveStore(reducerMap) {
                 }
                 nextState[c] = currentState;
             }
-            asyncStore[0] = nextState;
             return nextState;
         };
     }
@@ -55,30 +52,39 @@ function createLiveStore(reducerMap) {
     const reducer = combineReducers();
     //create context
     const Context = React.createContext(stores);
-    //Provider
-    function Provider({ children }) {
-        const [state, dispatch] = useReducer(reducer, stores);
-        asyncStore = [state, dispatch];
-        return <Context.Provider
-            value={[state, dispatch]}
-        >
-            {children}
-        </Context.Provider>;
+    //is mounted
+    let isMounted = false;
+    //Wapper
+    function Wapper({ children }) {
+        const [state, dispatch] = React.useReducer(reducer, stores);
+        //async of dispatch
+        dispatch.async = function () {
+            if (arguments[0].constructor !== Function) {
+                throw 'param of asyncDispatch must is function.';
+            }
+            arguments[0].apply(arguments[0], [dispatch]);
+            return arguments[0];
+        };
+        isMounted = true;
+        React.useEffect(() => {
+            return () => { isMounted = false; };
+        }, []);
+        return /*#__PURE__*/React.createElement(Context.Provider, {
+            value: { state, dispatch }
+        }, children);
     }
     function useStore() {
-        return useContext(Context);
-    }
-    function useProvider(FC) {
+        let store = null;
         try {
-            const current = typeof FC === 'function' ? <FC /> : FC;
-            return <Provider>{current}</Provider>;
+            store = React.useContext(Context);
         } catch (e) {
             throw e.name + ', ' + e.message;
         }
+        if (!isMounted) {
+            throw 'useStore() cannot be used before a container component is mounted';
+        }
+        return store;
     }
-    function getAsyncStore() {
-        return asyncStore;
-    }
-    return { useStore, useProvider, getAsyncStore };
+    return { useStore, Wapper };
 }
 export default createLiveStore;

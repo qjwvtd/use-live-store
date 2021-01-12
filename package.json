@@ -1,7 +1,7 @@
 {
     "name": "use-live-store",
-    "version": "0.2.0",
-    "description": "一个只用react hook api实现的全局和局部状态管理机",
+    "version": "0.2.1",
+    "description": "一个只用react hook api实现的状态管理机",
     "main": "index.js",
     "module": "index.js",
     "scripts": {
