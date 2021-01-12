@@ -1,12 +1,12 @@
 {
     "name": "use-live-store",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "一个只用react hook api实现的状态管理机",
     "main": "index.js",
     "module": "index.js",
     "scripts": {
         "build": "npm run lint && webpack",
-        "send": "npm publish --access=public",
+        "send": "npm run build && npm publish --access=public",
         "lint": "eslint --fix --ext .js,.jsx src",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

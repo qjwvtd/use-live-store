@@ -129,23 +129,14 @@ function createLiveStore(reducerMap) {
     throw 'Reducer is required';
   }
 
-  if ([Object, Function].indexOf(arguments[0].constructor) === -1) {
-    throw 'Parameter exception,The reducer collection must be an object type, ' + 'If there is only one reducer, use the reducer as the parameter directly' + 'For example:: {reducer1,reducer2,...} or reducer';
-  }
-
-  if (arguments[0].constructor === Function) {
-    var onlyReducer = arguments[0];
-    arguments[0] = {
-      onlyReducer: onlyReducer
-    };
+  if (arguments[0].constructor !== Object) {
+    throw 'Parameter exception,The reducer collection must be an object type, ' + 'For example:: {reducer1,reducer2,...} or {reducer}';
   } //绑定到第一个参数上
 
 
   reducerMap = arguments[0]; //克隆reducer
 
-  var clonedReducers = {}; //async store
-
-  var asyncStore = [];
+  var clonedReducers = {};
 
   for (var a in reducerMap) {
     if (reducerMap[a].constructor !== Function) {
@@ -176,7 +167,7 @@ function createLiveStore(reducerMap) {
 
 
   function combineReducers() {
-    function hookReducer(state, action) {
+    return function (state, action) {
       var nextState = {};
 
       for (var c in clonedReducers) {
@@ -191,11 +182,8 @@ function createLiveStore(reducerMap) {
         nextState[c] = currentState;
       }
 
-      asyncStore[0] = nextState;
       return nextState;
-    }
-
-    return hookReducer;
+    };
   } //merge stores
 
 
@@ -203,43 +191,61 @@ function createLiveStore(reducerMap) {
 
   var reducer = combineReducers(); //create context
 
-  var Context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(stores); //Provider
+  var Context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(stores); //is mounted
 
-  function Provider(_ref) {
+  var isMounted = false; //Wapper
+
+  function Wapper(_ref) {
     var children = _ref.children;
 
-    var _useReducer = Object(react__WEBPACK_IMPORTED_MODULE_0__["useReducer"])(reducer, stores),
-        _useReducer2 = _slicedToArray(_useReducer, 2),
-        state = _useReducer2[0],
-        dispatch = _useReducer2[1];
+    var _React$useReducer = react__WEBPACK_IMPORTED_MODULE_0___default.a.useReducer(reducer, stores),
+        _React$useReducer2 = _slicedToArray(_React$useReducer, 2),
+        state = _React$useReducer2[0],
+        dispatch = _React$useReducer2[1]; //async of dispatch
 
-    asyncStore = [state, dispatch];
+
+    dispatch.async = function () {
+      if (arguments[0].constructor !== Function) {
+        throw 'param of asyncDispatch must is function.';
+      }
+
+      arguments[0].apply(arguments[0], [dispatch]);
+      return arguments[0];
+    };
+
+    isMounted = true;
+    react__WEBPACK_IMPORTED_MODULE_0___default.a.useEffect(function () {
+      return function () {
+        isMounted = false;
+      };
+    }, []);
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Context.Provider, {
-      value: [state, dispatch]
+      value: {
+        state: state,
+        dispatch: dispatch
+      }
     }, children);
   }
 
   function useStore() {
-    return Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(Context);
-  }
+    var store = null;
 
-  function useProvider(FC) {
     try {
-      var current = typeof FC === 'function' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FC, null) : FC;
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Provider, null, current);
+      store = react__WEBPACK_IMPORTED_MODULE_0___default.a.useContext(Context);
     } catch (e) {
       throw e.name + ', ' + e.message;
     }
-  }
 
-  function getAsyncStore() {
-    return asyncStore;
+    if (!isMounted) {
+      throw 'useStore() cannot be used before a container component is mounted';
+    }
+
+    return store;
   }
 
   return {
     useStore: useStore,
-    useProvider: useProvider,
-    getAsyncStore: getAsyncStore
+    Wapper: Wapper
   };
 }
 
