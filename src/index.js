@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-function createLiveStore(reducerMap) {
+export default function createLiveStore(reducerMap) {
     if (arguments.length === 0) {
         throw 'Reducer is required';
     }
@@ -52,23 +52,18 @@ function createLiveStore(reducerMap) {
     const reducer = combineReducers();
     //create context
     const Context = React.createContext(stores);
-    //is mounted
-    let isMounted = false;
     //Wapper
     function Wapper({ children }) {
-        const [state, dispatch] = React.useReducer(reducer, stores);
-        //async of dispatch
-        dispatch.async = function () {
-            if (arguments[0].constructor !== Function) {
-                throw 'param of asyncDispatch must is function.';
+        const [state, action] = React.useReducer(reducer, stores);
+        const dispatch = function () {
+            if (arguments[0].constructor === Object) {
+                action.apply(action, [arguments[0]]);
             }
-            arguments[0].apply(arguments[0], [dispatch]);
-            return arguments[0];
+            if (arguments[0].constructor === Function) {
+                arguments[0].apply(arguments[0], [action]);
+            }
+            return action;
         };
-        isMounted = true;
-        React.useEffect(() => {
-            return () => { isMounted = false; };
-        }, []);
         return /*#__PURE__*/React.createElement(Context.Provider, {
             value: { state, dispatch }
         }, children);
@@ -80,11 +75,7 @@ function createLiveStore(reducerMap) {
         } catch (e) {
             throw e.name + ', ' + e.message;
         }
-        if (!isMounted) {
-            throw 'useStore() cannot be used before a container component is mounted';
-        }
         return store;
     }
     return { useStore, Wapper };
 }
-export default createLiveStore;

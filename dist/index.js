@@ -106,6 +106,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return createLiveStore; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -121,7 +122,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 function createLiveStore(reducerMap) {
@@ -191,9 +191,7 @@ function createLiveStore(reducerMap) {
 
   var reducer = combineReducers(); //create context
 
-  var Context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(stores); //is mounted
-
-  var isMounted = false; //Wapper
+  var Context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(stores); //Wapper
 
   function Wapper(_ref) {
     var children = _ref.children;
@@ -201,24 +199,20 @@ function createLiveStore(reducerMap) {
     var _React$useReducer = react__WEBPACK_IMPORTED_MODULE_0___default.a.useReducer(reducer, stores),
         _React$useReducer2 = _slicedToArray(_React$useReducer, 2),
         state = _React$useReducer2[0],
-        dispatch = _React$useReducer2[1]; //async of dispatch
+        action = _React$useReducer2[1];
 
-
-    dispatch.async = function () {
-      if (arguments[0].constructor !== Function) {
-        throw 'param of asyncDispatch must is function.';
+    var dispatch = function dispatch() {
+      if (arguments[0].constructor === Object) {
+        action.apply(action, [arguments[0]]);
       }
 
-      arguments[0].apply(arguments[0], [dispatch]);
-      return arguments[0];
+      if (arguments[0].constructor === Function) {
+        arguments[0].apply(arguments[0], [action]);
+      }
+
+      return action;
     };
 
-    isMounted = true;
-    react__WEBPACK_IMPORTED_MODULE_0___default.a.useEffect(function () {
-      return function () {
-        isMounted = false;
-      };
-    }, []);
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Context.Provider, {
       value: {
         state: state,
@@ -236,10 +230,6 @@ function createLiveStore(reducerMap) {
       throw e.name + ', ' + e.message;
     }
 
-    if (!isMounted) {
-      throw 'useStore() cannot be used before a container component is mounted';
-    }
-
     return store;
   }
 
@@ -248,8 +238,6 @@ function createLiveStore(reducerMap) {
     Wapper: Wapper
   };
 }
-
-/* harmony default export */ __webpack_exports__["default"] = (createLiveStore);
 
 /***/ })
 /******/ ])["default"];
