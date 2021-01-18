@@ -92,7 +92,7 @@ function View(){
         //no async
         dispatch({type: 'xxx',data: 'xxx'});
         //or async
-        dispatch.async(initGirl());
+        dispatch(initGirl());
     },[]);
     return <div>{state}</div>; 
 }
